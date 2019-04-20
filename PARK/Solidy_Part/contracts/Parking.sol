@@ -59,7 +59,7 @@ contract Parking {
     uint reservedDelay = 10 seconds;
     uint time_unit = 60*60;
     uint before_reservation_time = 12 hours;
-    uint cancel_reservation_time = 30 minutes;
+    uint valid_reservation_time = 30 minutes;
 
     //transfer wei log
     event transferEvent (address _from, address _to, uint _number);
@@ -281,7 +281,7 @@ contract Parking {
                 }
             //park
             } else if (_operator == 1) {
-                require(check_time - now <= cancel_reservation_time, 'not your reservation time.');
+                require(check_time - now <= valid_reservation_time, 'not your reservation time.');
                 park_info[park_id].SpaceState[space_id] = 1;
 
             }
