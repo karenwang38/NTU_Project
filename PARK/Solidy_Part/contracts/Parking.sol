@@ -278,6 +278,7 @@ contract Parking {
 
                 if (check_time - now <= before_reservation_time) {
                     park_info[park_id].Empty++;
+                    park_info[park_id].SpaceState[space_id] = 0;
                 }
             //park
             } else if (_operator == 1) {
