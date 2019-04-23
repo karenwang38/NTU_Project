@@ -272,13 +272,6 @@ contract Parking {
         return (true,check_time);
     }
     
-    // //Park in time
-    // function ParkOrder (uint _parkingID,uint _spaceID) public returns (bool) {
-    //     require(parkIDvalid[_parkingID] == true, 'This Park ID is invalid.');
-    //     park_info[_parkingID].SpaceStatus[_spaceID] = park_info[_parkingID].SpaceStatus[_spaceID] + 1;
-    //     UpdateParkEmpty(_parkingID);
-    //     return true;
-    // }
     
     //payment (information from front end sensor)
     function ParkPay (uint _parkingID, uint _price) public payable returns (bool) {
@@ -291,37 +284,11 @@ contract Parking {
     }
     
     
-    
-    
     //test
-    function ChangeReservedTime (uint _reserveID, uint _time) public {
+    function ChangeReservedTime (uint _reserveID, uint _time)  public {
         reserve_info[_reserveID].ReservedTime = _time;
     }
     
-    
-    //  uint start_time = now;
-    //  uint update_time = 5 seconds;
-    //  uint [2] space_status_test = [1, 4];
-    // function UpdateSpaceStatus () public 
-    //     returns (uint [2] memory _result, uint and_result) {
-
-    //         if (now - start_time >= update_time) {
-    //             space_status_test[0] = space_status_test[0] >> 1;
-    //             space_status_test[1] = space_status_test[1] >> 1;
-    //             start_time = now;
-    //         }
-            
-    //         and_result = space_status_test[0] & space_status_test[1];
-            
-            
-    //         return (space_status_test, and_result);
-            
-    //     }
-        
-    // //for contract test
-    // function Transfer2Contract () public payable returns (bool) {
-    //     return true;
-    // }
     
     function getContractBalance () public view returns (uint) {
         return ContractAddress.balance;
