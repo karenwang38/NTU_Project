@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>AirParking</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<div class="container" style="width: 650px;">
+<table border='0' cellpadding='10' style='height: 30%; width: 100%'>
+  <tr>
+    <td>
+      <div id = 'header_logo'>
+        <img src='pic/logo.png' style='height: 100px; width: 100px;'>
+      </div>
+    </td>
+    <td>
+      <div id = 'header'>
+        <h1 style = 'text-align: left;'>{{ message }}</h1>
+
+      </div>
+    </td>
+    <td>
+      <div id = 'purchasecoin'>
+        <button v-on:click = 'purchase' style ='font-size: 12pt; width: 200px; height: 30px'>Purchase AirCoin Now</button>
+      </div>
+    </td>
+  </tr>
+</table>
+<hr>
+
+<table>
+  <p id="contractOwner"></p>
+  <p id="contractAddress"></p>
+
+</table>
+
+<table>
+  <h2>Account Info</h2>
+  <p id="accountAddress"></p>
+  <p id="userBalance"></p>
+  <p id="userRignt"></p>
+</table>
+<hr>
+<table class="table">
+  <h2>ParkLot Information (後端資料庫＋合約)</h2>
+  <h3>名稱、地址、電話(後端資料庫)..</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Empty</th>
+          <th scope="col">Total</th>
+          <th scope="col">Price(Eth)</th>
+          <th scope="col">Deposit(Eth)</th>
+          <th scope="col">Park Owner Address</th>
+          <th scope="col">Valid</th>
+        </tr>
+      </thead>
+      <tbody id="parkLotInfo">
+      </tbody>
+    </table>
+
+</table>
+<hr>
+<table>
+  <div id="airParking_register">
+    <h2>ParkLot Register (AirPark Admin：從後端拿到申請的資料，逐項確認。**：表示存在智能合約)</h2>
+    Parking Lot Name:
+    <input size="20" value="Taipei 101">
+    <br>
+    Park Lot Location:
+    <input size="30" value="110台北市信義區信義路五段7號">
+    <br>
+    Phone Number:
+    <input size="20" value="0800000000">
+    <br>
+    Total Space**:
+    <input size="20" value="3" id="total">
+    <br>
+    Price **:
+    <input size="20" value="1" id="price">
+    <br>
+    ParkingOwner **
+    <input size="50" value="0x4755469d788ce207e47ae33653b1f33bec718aed" id="parkingOwner">
+    <br>
+
+    <form onSubmit="App.ParkRegister(); return false;">
+      <button type="submit" class="btn btn-primary">Agree</button>
+
+    </form>
+  </div>
+
+</table>
+<hr>
+<table>
+  <h2>Booking (User: 送表單至後端資料庫，合約送出booking event, 資料傳回後端儲存。)</h2>
+  <form onSubmit="App.Book(); return false;">
+    <div class="form-group">
+      <label for="parkingLotSelect">Select Parking Lot</label>
+      <select class="form-control" id="parkingLotSelect">
+      </select>
+      <p id="spaceInfo"></p>
+      <input type="button" class="btn btn-primary" value="Search Space" name="Search Space" onclick="App.SearchSpace()">
+<!--
+      <form onSubmit="App.ParkRegister(); return false;">
+        <button type="submit" class="btn btn-primary">Search Space</button>
+
+      </form>
+-->
+    </div>
+    Name:
+    <input size="10" value="Peter" id="name">
+    <br>
+    Phone Number:
+    <input size="15" value="0911111111" id="phoneNumber">
+    <br>
+    Space Id**:
+    <input size="10" value="2" id="spaceId">
+    <br>
+    After hours(日期時間顯示？？)**:
+    <input size="10" value="2" id="booktime">
+    <br>
+    <button type="submit" class="btn btn-primary">Booking</button>
+    <hr>
+  </form>
+</table>
+
+<table>
+  <h2>Check Reservation (User: 從資料庫撈取資料)</h2>
+  <form onSubmit="App.ReserveCheck(); return false;">
+    Reservation Id:
+    <input size="10" value="2" id="reserveId">
+    <h3>user name, phone...(從資料庫撈取資料)</h3>
+    <div id="reserveInfo"></div>
+    <br>
+    <button type="submit" class="btn btn-primary">Check</button>
+    <input type="button" class="btn btn-primary" value="Cancel" name="Reservation Cancel" onclick="App.ReservationCancel()">
+    <input type="button" class="btn btn-primary" value="Parking" name="Reservation Parking" onclick="App.ReservationParking()">
+    <br>
+    <br>
+    秒：
+    <input size="10" value="2" id="changeTime">
+    <br>
+    <input type="button" class="btn btn-primary" value="Change Reserve Time(for testing)" name="Change Reserve Time" onclick="App.ChangeReserveTime()">
+    <hr>
+</table>
+
+<table>
+  <h2>Parking (Parking Lot Admin)</h2>
+  <form onSubmit="App.ReserveCheck(); return false;">
+    Reservation Id:
+    <input size="10" value="2" id="reserveId">
+    <h3>user name, phone...(從資料庫撈取資料)</h3>
+    <div id="reserveInfo"></div>
+    <br>
+    <button type="submit" class="btn btn-primary">Check</button>
+    <hr>
+  </form>
+</table>
+
+<table>
+  <button type="submit" class="btn btn-primary">Register(彈出申請註冊AirParking 表單)</button>
+  <div id="user_register">
+    <h2>ParkLot Register (User: 按下Register，跳出申請表單，填完送表單至後端資料庫)</h2>
+    <input size="20" value="Taipei 101" id=""> Name
+    <br>
+    <input size="30" value="110台北市信義區信義路五段7號" id=""> Park Lot Address
+    <br>
+    <input size="20" value="0800000000" id=""> Phone Number
+    <br>
+    <input size="20" value="3" id=""> total **
+    <br>
+
+    <input size="20" value="1" id=""> _price **
+    <br>
+    <input size="20" value="1" id=""> _deposit **
+    <br>
+    <input size="50" value="0x4755469d788ce207e47ae33653b1f33bec718aed" id=""> _parkingOwner **
+    <br>
+    <button type="submit" class="btn btn-primary">Apply</button>
+  </div>
+
+</table>
+<hr>
+<table border='0' cellpadding='10' style='height: 50%; width: 100%'>
+  <tr>
+    <td>
+      <h3>Start booking your parking space</h3>
+      <h4>First, choose the date and time</h4>
+      <div id = 'datetimeselector'>
+        <input type = 'date' name = 'bday'>
+        <input type = 'number' name = 'bhour'>
+      </div>
+      <h4>Second, choose the city</h4>
+      <div id = 'cityselector'>
+        <select>
+          <option>Taipei</option>
+        </select>
+      </div>
+      <h4>Third, choose the parking lot</h4>
+      <div id = 'parkinglotselector'>
+        <select>
+          <option>Taipei 101</option>
+          <option>NTU</option>
+        </select>
+      </div>
+      <br>
+      <div id = 'startbooking'>
+        <button v-on:click = 'booking' style = 'font-size: 12pt; width: 200px; height: 30px'>Booking Now !</button>
+      </div>
+    </td>
+  </tr>
+</table>
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+
+    <script src="js/index.js"></script>
+
+    <script src="js/app.js"></script>
+
+  </body>
+</html>
