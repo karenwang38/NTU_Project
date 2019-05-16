@@ -33,12 +33,13 @@
     
     
     @前端
-        - AirParking Admin 頁面
-            申請核准
-            車廠訊息
-        - 停車場 Admin 頁面
-            車廠管理
-        - 註冊為AipParking 車廠、表單頁面
+        - user 頁面（主要）
+            - AirParking Admin 按鈕、頁面
+                申請核准
+                車廠訊息
+            - 停車場 Admin 按鈕、頁面
+                車廠管理
+            - 註冊為AipParking 車廠按鈕、表單頁面
      @後端
         - 申請表單
         - 車廠訊息
@@ -47,6 +48,7 @@
         - 發幣(open)
         - 與前端互動(on-going)
             修改array 管理車位
+        - 臨時停車紀錄，時間、費用、支付。
         
         
     
