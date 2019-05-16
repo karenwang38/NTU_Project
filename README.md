@@ -24,6 +24,34 @@
         function getContractBalance : 查詢合約餘額（wei)。
         ＝＝＝＝＝＝＝ 以下為測試函數 ＝＝＝＝＝＝＝＝
         function ChangeReservedTime : 改變預約時間。
+## 前端＋智能合約互動
+    ＠PARK
+        $ truffle console
+        truffle(development)> migrate --reset
+    @src
+        $ npm run dev
+    
+    
+    @前端
+        - user 頁面（主要）
+            - AirParking Admin 按鈕、頁面
+                申請核准
+                車廠訊息
+            - 停車場 Admin 按鈕、頁面
+                車廠管理
+            - 註冊為AipParking 車廠按鈕、表單頁面
+     @後端
+        - 申請表單
+        - 車廠訊息
+        - 預約客戶資料
+     @智能合約
+        - 發幣(open)
+        - 與前端互動(on-going)
+            修改array 管理車位
+        - 臨時停車紀錄，時間、費用、支付。
+        
+        
+    
         
 
 
