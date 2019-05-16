@@ -45,6 +45,7 @@
 <table>
   <p id="contractOwner"></p>
   <p id="contractAddress"></p>
+  <p id="contractBalance"></p>
 
 </table>
 
@@ -93,6 +94,9 @@
     <br>
     Price **:
     <input size="20" value="1" id="price">
+    <br>
+    Deposit **:
+    <input size="20" value="1" id="deposit">
     <br>
     ParkingOwner **
     <input size="50" value="0x4755469d788ce207e47ae33653b1f33bec718aed" id="parkingOwner">
@@ -153,23 +157,40 @@
     <br>
     <br>
     秒：
-    <input size="10" value="2" id="changeTime">
+    <input size="15" value="2" id="changeTime">
     <br>
     <input type="button" class="btn btn-primary" value="Change Reserve Time(for testing)" name="Change Reserve Time" onclick="App.ChangeReserveTime()">
     <hr>
+  </form>
 </table>
 
 <table>
-  <h2>Parking (Parking Lot Admin)</h2>
-  <form onSubmit="App.ReserveCheck(); return false;">
-    Reservation Id:
-    <input size="10" value="2" id="reserveId">
-    <h3>user name, phone...(從資料庫撈取資料)</h3>
-    <div id="reserveInfo"></div>
+  <h2>Parking (Parking Lot Admin, 記錄停車訊息、停車時間、離開時間、計算費用，存入後端)</h2>
+  <form onSubmit="App.UpdateParkEmpty(); return false;">
+    ParkLot ID:
+    <input size="10" value="2" id="ParLotkId">
+    Space ID:
+    <input size="10" value="2" id="LotSpaceId">
+    Status:
+    <input size="10" value="2" id="LotStatus">
     <br>
-    <button type="submit" class="btn btn-primary">Check</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     <hr>
   </form>
+</table>
+
+<table>
+  <form onSubmit="App.ParkPay(); return false;">
+  <h2>Payment : 給user繳費訊息 (記錄收費訊息、停車時間、離開時間、計算費用，存入後端資料庫)</h2>
+  ParkLot ID:
+  <input size="10" value="2" id="paymentParkId">
+  Price:
+  <input size="10" value="2" id="paymentPrice">
+  <br>
+  <button type="submit" class="btn btn-primary">Pay</button>
+  <hr>
+  </form>
+
 </table>
 
 <table>

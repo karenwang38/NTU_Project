@@ -157,6 +157,10 @@ App = {
         userRegister.hide();
       }
 
+      return parkingInstance.getContractBalance();
+    }).then(function(contractBalance) {
+      $("#contractBalance").html("Contract Balance: " + contractBalance/App.WeitoEth);
+
       return parkingInstance.ParkLotNumber();
     }).then(function(parklotNumber) {
       var parkLotInfo = $("#parkLotInfo");
@@ -359,6 +363,43 @@ App = {
       alert("parking fail : reservation is not allowed!")
     });
   },
+
+  UpdateParkEmpty: function() {
+    var ParLotkId = $('#ParLotkId').val();
+    var LotSpaceId = $('#LotSpaceId').val()
+    var LotStatus = $('#LotSpaceId').val()
+
+    App.contracts.Parking.deployed().then(function(instance) {
+
+
+      return instance.UpdateParkEmpty(ParLotkId, LotSpaceId, LotStatus);
+    }).then(function(result) {
+      alert("Parking Lot update success!")
+      App.render();
+    }).catch(function(err) {
+      console.error(err);
+      alert("Parking Lot update fail!")
+    });
+  },
+
+  ParkPay: function() {
+    var paymentParkId = $('#paymentParkId').val();
+    var paymentPrice = $('#paymentPrice').val()
+
+    App.contracts.Parking.deployed().then(function(instance) {
+
+
+      return instance.ParkPay(paymentParkId, paymentPrice, {value: paymentPrice * App.WeitoEth});
+    }).then(function(result) {
+      alert("Paying success!")
+      App.render();
+    }).catch(function(err) {
+      console.error(err);
+      alert("Paying fail!")
+    });
+  },
+
+
 
   ChangeReserveTime: function() {
     var reserveId = $('#reserveId').val();
