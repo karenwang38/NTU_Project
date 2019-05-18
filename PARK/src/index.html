@@ -53,7 +53,15 @@
   <h2>Account Info</h2>
   <p id="accountAddress"></p>
   <p id="userBalance"></p>
+  <p id="APtokenBalance"></p>
   <p id="userRignt"></p>
+  Eth : AP = 1 : 100
+  <br>
+  <input size="5" value="3" id="ethAmount"> Eth
+  <br>
+  <input type="button" class="btn btn-primary" value="Buy APtoken" name="Buy APtoken" onclick="App.buyToken()">
+
+
 </table>
 <hr>
 <table class="table">
@@ -184,10 +192,14 @@
   <h2>Payment : 給user繳費訊息 (記錄收費訊息、停車時間、離開時間、計算費用，存入後端資料庫)</h2>
   ParkLot ID:
   <input size="10" value="2" id="paymentParkId">
-  Price:
+  ETH Price:
   <input size="10" value="2" id="paymentPrice">
-  <br>
   <button type="submit" class="btn btn-primary">Pay</button>
+  APtoken Price:
+  <input size="10" value="100" id="paymentTokenPrice">
+  <input type="button" class="btn btn-primary" value="Pay" name="Pay for APtoken" onclick="App.APtokenPay()">
+  <br>
+
   <hr>
   </form>
 

@@ -24,6 +24,13 @@ App = {
   },
 
   initContract: function() {
+    $.getJSON("APtoken.json", function(APtoken) {
+      // Instantiate a new truffle contract from the artifact
+      App.contracts.APtoken = TruffleContract(APtoken);
+      // Connect provider to interact with contract
+      App.contracts.APtoken.setProvider(App.web3Provider);
+
+    });
     $.getJSON("Parking.json", function(parking) {
       // Instantiate a new truffle contract from the artifact
       App.contracts.Parking = TruffleContract(parking);
@@ -31,6 +38,9 @@ App = {
       App.contracts.Parking.setProvider(App.web3Provider);
 
       App.listenForEvents();
+      App.listenForBuyTokenEvents();
+
+
 
       return App.render();
     });
@@ -50,9 +60,40 @@ App = {
         toBlock: 'latest'
       }).watch(function(error, event) {
         console.log("event triggered", event)
+
+      });
+    });
+  },
+
+  // Listen for APtoken events emitted from the contract
+  listenForBuyTokenEvents: function() {
+    App.contracts.APtoken.deployed().then(function(instance) {
+      // Restart Chrome if you are unable to receive this event
+      // This is a known issue with Metamask
+      // https://github.com/MetaMask/metamask-extension/issues/2393
+
+      APtokeninstance = instance;
+
+      APtokeninstance.ethTransfer({}, {
+        fromBlock: 0,
+        toBlock: 'latest'
+      }).watch(function(error, event) {
+        console.log("APtoken ETH transfer event triggered", event)
+        // Reload when a new vote is recorded
+        //App.render();
+
+
+      });
+
+      APtokeninstance.Transfer({}, {
+        fromBlock: 0,
+        toBlock: 'latest'
+      }).watch(function(error, event) {
+        console.log("APtoken event triggered", event)
         // Reload when a new vote is recorded
         //App.render();
       });
+
     });
   },
 
@@ -63,13 +104,6 @@ App = {
     var adminRegister = $("#airParking_register");
     var userRegister = $("#user_register");
 
-
-
-
-
-    loader.show();
-    content.hide();
-
     // Load account data
     web3.eth.getCoinbase(function(err, account) {
       if (err === null) {
@@ -79,8 +113,23 @@ App = {
         // Call a function to update the UI with the new account
         web3.eth.getBalance(App.account, function(err, balance) {
 
-            $("#userBalance").html("Balance: " + balance/App.WeitoEth);
+            $("#userBalance").html("Eth Balance: " + balance/App.WeitoEth);
         });
+
+
+        App.contracts.APtoken.deployed().then(function(instance) {
+
+
+          return instance.balanceOf(App.account);
+        }).then(function(result) {
+          console.log("Get token balance ");
+          $("#APtokenBalance").html("APtoken Balance: " + result);
+        }).catch(function(err) {
+          console.error(err);
+          alert("Get token balance fail");
+        });
+
+
 
 
       }
@@ -106,6 +155,18 @@ App = {
           web3.eth.getBalance(App.account, function(err, balance) {
 
               $("#userBalance").html("Balance: " + balance/App.WeitoEth);
+          });
+
+          App.contracts.APtoken.deployed().then(function(instance) {
+
+
+            return instance.balanceOf(App.account);
+          }).then(function(result) {
+            console.log("Get token balance ");
+            $("#APtokenBalance").html("APtoken Balance: " + result);
+          }).catch(function(err) {
+            console.error(err);
+            alert("Get token balance fail");
           });
 
           App.contracts.Parking.deployed().then(function(instance) {
@@ -190,44 +251,11 @@ App = {
 
         });
       }
-
-
-      return electionInstance.candidatesCount();
-    }).then(function(candidatesCount) {
-      var candidatesResults = $("#candidatesResults");
-      candidatesResults.empty();
-
-      var candidatesSelect = $('#candidatesSelect');
-      candidatesSelect.empty();
-
-      for (var i = 1; i <= candidatesCount; i++) {
-        electionInstance.candidates(i).then(function(candidate) {
-          var id = candidate[0];
-          var name = candidate[1];
-          var voteCount = candidate[2];
-
-          // Render candidate Result
-          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
-          candidatesResults.append(candidateTemplate);
-
-          // Render candidate ballot option
-          var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
-          candidatesSelect.append(candidateOption);
-        });
-      }
-      return electionInstance.voters(App.account);
-    }).then(function(hasVoted) {
-      // Do not allow a user to vote
-      if(hasVoted) {
-        $('form').hide();
-      }
-      loader.hide();
-      content.show();
-    }).catch(function(error) {
-      console.warn(error);
     });
   },
 
+  ////////////////////////////////////////////////////////////////
+  //Parking API
   Book: function() {
     var parkId = $('#parkingLotSelect').val();
     var startBookTime = $('#booktime').val();
@@ -399,6 +427,24 @@ App = {
     });
   },
 
+  APtokenPay: function() {
+    var paymentTokenPrice = $('#paymentTokenPrice').val();
+    var paymentParkId = $('#paymentParkId').val();
+
+    App.contracts.Parking.deployed().then(function(instance) {
+      ParkingInstance = instance;
+      return ParkingInstance.park_info(paymentParkId);
+    }).then(function(result) {
+        var parkLotAddress = result[5];
+        console.log("parkLotAddress=", parkLotAddress);
+        App.APtokenTransfer(parkLotAddress, paymentTokenPrice);
+
+    }).catch(function(err) {
+      console.error(err);
+      alert("Get ParkOwner Address fail.");
+    });
+
+  },
 
 
   ChangeReserveTime: function() {
@@ -417,31 +463,56 @@ App = {
     });
   },
 
-  timestampToTime : function (timestamp) {
+  ////////////////////////////////////////////////////////////////
+  //APtoken API
+  APtokenTransfer: function(address, price) {
+    App.contracts.APtoken.deployed().then(function(instance) {
+      APtokenInstance = instance;
+      console.log("get APtoken transfer.");
+      return APtokenInstance.transfer(address, price);
+    }).then(function(result) {
+      console.log("AP token pay success.");
+      App.render();
+    }).catch(function(err) {
+      console.error(err);
+      alert("AP token pay fail.");
+    });
+  },
 
+  buyToken: function() {
+    var ethAmount = $('#ethAmount').val();
+
+    App.contracts.APtoken.deployed().then(function(instance) {
+
+
+      return instance.buyToken(ethAmount, {value: ethAmount * App.WeitoEth});
+    }).then(function(result) {
+      alert("Buy token success!")
+      App.render();
+    }).catch(function(err) {
+      console.error(err);
+      alert("Buy token fail!")
+    });
+  },
+
+
+  ////////////////////////////////////////////////////////////////
+  //JS function
+  timestampToTime: function (timestamp) {
         var  date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-
         var Y = date.getFullYear() + '-';
-
         var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-
         var D = date.getDate() + ' ';
-
         var h = date.getHours() + ':';
-
         var m = date.getMinutes() + ':';
-
         var s = date.getSeconds();
-
         return Y+M+D+h+m+s;
-
-    }
+    },
       // ---------------------
       // 作者：calmlc
       // 来源：CSDN
       // 原文：https://blog.csdn.net/Lc_style/article/details/80626748
       // 版权声明：本文为博主原创文章，转载请附上博文链接！
-
 
 };
 

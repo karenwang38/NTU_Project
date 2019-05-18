@@ -1,6 +1,9 @@
 pragma solidity >=0.4.22 <0.6.0;
+//import './APtoken.sol';
+
 contract Parking {
 
+    //APtoken public tokenContract;
     struct ParkInfo {
         uint ParkID;
         uint Empty;     // empty number
@@ -50,8 +53,6 @@ contract Parking {
         Admin[ContractOwner] = true;
         reservationID = 0;
         ParkLotNumber = 0;
-
-
 
 
     }
@@ -284,6 +285,7 @@ contract Parking {
         emit transferEvent(msg.sender, park_info[_parkingID].ParkAddress, msg.value);
         return true;
     }
+
 
 
     //test
