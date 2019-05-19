@@ -273,12 +273,24 @@ App = {
       return parkingInstance.park_info(parkId);
     }).then(function(parkInfo) {
       var deposit = parkInfo[4];
-      console.log("deposit:", deposit);
+      //console.log("deposit:", deposit);
 
 
       return parkingInstance.ParkReserve(parkId, spaceId, startBookTime, {value: deposit});
     }).then(function(result) {
       // Wait for votes to update
+      App.contracts.Parking.deployed().then(function(instance) {
+        return instance.reservationID();
+      }).then(function(bookId) {
+        alert("Your reservation ID: " + bookId);
+
+      }).catch(function(err) {
+        alert("Reservation fail:");
+        console.error(err);
+      });
+
+
+
       App.render();
     }).catch(function(err) {
       console.error(err);
@@ -295,6 +307,24 @@ App = {
       return instance.ParkRegister(total, price, deposit, parkingOwner);
     }).then(function(result) {
       // Wait for votes to update
+
+      //get ParkLot ID
+      App.contracts.Parking.deployed().then(function(instance) {
+        return instance.ParkLotNumber();
+
+      }).then(function(ParkID) {
+
+        alert("ParkingLot ID: " + ParkID);
+
+
+      }).catch(function(err) {
+        console.error(err);
+
+
+        alert("Register ParkingLot fail:");
+
+      });
+
       App.render();
       console.log(result);
     }).catch(function(err) {
@@ -395,7 +425,7 @@ App = {
   UpdateParkEmpty: function() {
     var ParLotkId = $('#ParLotkId').val();
     var LotSpaceId = $('#LotSpaceId').val()
-    var LotStatus = $('#LotSpaceId').val()
+    var LotStatus = $('#LotStatus').val()
 
     App.contracts.Parking.deployed().then(function(instance) {
 
